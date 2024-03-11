@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from event.models import Event
 from organization.serializers import OrganizationSerializerListEvent
-from users.serializers import UserSerializer
 
 
 class EventSerializerCreate(serializers.ModelSerializer):
@@ -11,7 +10,7 @@ class EventSerializerCreate(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    organization = OrganizationSerializerListEvent(many=True, read_only=True)
+    organization = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -21,3 +20,8 @@ class EventSerializer(serializers.ModelSerializer):
             'description',
             'organization',
         )
+
+    def get_organization(self, obj):
+        organizations = obj.organization.filter(users__isnull=False)
+        serializer = OrganizationSerializerListEvent(organizations, many=True)
+        return serializer.data

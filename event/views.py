@@ -1,8 +1,9 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
 
 from event.models import Event
+from event.paginators import EventPaginator
 from event.serializers import EventSerializerCreate, EventSerializer
 
 
@@ -15,10 +16,24 @@ class EventCreate(generics.CreateAPIView):
         return super(EventCreate, self).post(request, *args, **kwargs)
 
 
-class EventList(generics.RetrieveAPIView):
+class EventRetrieve(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+
+    @swagger_auto_schema(operation_summary="event")
+    def get(self, request, *args, **kwargs):
+        return super(EventRetrieve, self).get(request, *args, **kwargs)
+
+
+class EventList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = EventSerializerCreate
+    queryset = Event.objects.all()
+    pagination_class = EventPaginator
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title']
+    ordering_fields = ['date']
 
     @swagger_auto_schema(operation_summary="list event")
     def get(self, request, *args, **kwargs):

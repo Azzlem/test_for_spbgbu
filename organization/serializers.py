@@ -4,7 +4,6 @@ from users.serializers import UserSerializer
 
 
 class OrganizationSerializerListEvent(serializers.ModelSerializer):
-
     users = serializers.SerializerMethodField()
     address_and_postcode = serializers.SerializerMethodField()
 
@@ -21,5 +20,8 @@ class OrganizationSerializerListEvent(serializers.ModelSerializer):
 
     def get_users(self, obj):
         users = obj.users.all().filter(is_active=True)
-        serializer = UserSerializer(users, many=True)
-        return serializer.data
+        if not users:
+            return None
+        else:
+            serializer = UserSerializer(users, many=True)
+            return serializer.data
