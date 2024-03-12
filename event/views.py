@@ -1,3 +1,6 @@
+from time import sleep
+
+from asgiref.sync import sync_to_async
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +16,9 @@ class EventCreate(generics.CreateAPIView):
 
     @swagger_auto_schema(operation_summary="create event")
     def post(self, request, *args, **kwargs):
-        return super(EventCreate, self).post(request, *args, **kwargs)
+        sync_to_async(sleep(60), thread_sensitive=True)
+        response = sync_to_async(super(EventCreate, self).post(request, *args, **kwargs), thread_sensitive=True)
+        return response
 
 
 class EventRetrieve(generics.RetrieveAPIView):
