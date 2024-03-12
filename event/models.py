@@ -10,7 +10,7 @@ class Event(models.Model):
     date = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.title} - {self.date}"
+        return f"{self.title} - {self.date.strftime('%d.%m.%Y, %H:%M')}"
 
     class Meta:
         verbose_name = "Event"

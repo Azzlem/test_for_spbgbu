@@ -15,8 +15,9 @@ class EventCreate(generics.CreateAPIView):
     serializer_class = EventSerializerCreate
 
     @swagger_auto_schema(operation_summary="create event")
-    def post(self, request, *args, **kwargs):
+    async def post(self, request, *args, **kwargs):
         sync_to_async(sleep(60), thread_sensitive=True)
+
         response = sync_to_async(super(EventCreate, self).post(request, *args, **kwargs), thread_sensitive=True)
         return response
 
